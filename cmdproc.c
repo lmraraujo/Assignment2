@@ -34,6 +34,10 @@ int cmdProc(void)
         if(UARTRxBuff[i] == START_OF_FRAME) break;
     }
 
+    temperature = (TEMP_MIN + TEMP_MAX) / 2; //5 A-15,V-13,G-11,Al-18
+    humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;//50 A-60, V-40, G-55, Al-35
+    co2 = (CO2_MIN + CO2_MAX) / 2;//10200 A-500, V-300, G-400, Al-450
+
     if (i < rxBufflen){
         unsigned char regiao= UARTRxBuff[i+3];
         switch(regiao){
@@ -299,20 +303,24 @@ int cmdProc(void)
                 
                 
                 int printIndex;
-               
-                    printf("\nTemperatura: ");
-                    for(printIndex=0;printIndex<histIndex;printIndex++){
-                        printf("%d ",temphist[printIndex]);
+
+                    if(histIndex!=0){
+                        printf("\nTemperatura: ");
+                        for(printIndex=0;printIndex<HISTORY;printIndex++){
+                            if(temphist[printIndex]!=0) printf("%d ",temphist[printIndex]);
+                        }
+                        printf("\nHumidade: ");
+                        for(printIndex=0;printIndex<HISTORY;printIndex++){
+                            if(temphist[printIndex]!=0) printf("%d ",humhist[printIndex]);
+                        }
+                        printf("\nCo2: ");
+                        for(printIndex=0;printIndex<HISTORY;printIndex++){
+                            if(temphist[printIndex]!=0) printf("%d ",cohist[printIndex]);
+                        }
+                    }else{
+                        printf("\nHistórico vazio\n");
+                        return EMPTY_BUFFER;
                     }
-                    printf("\nHumidade: ");
-                    for(printIndex=0;printIndex<histIndex;printIndex++){
-                        printf("%d ",humhist[printIndex]);
-                    }
-                    printf("\nCo2: ");
-                    for(printIndex=0;printIndex<histIndex;printIndex++){
-                        printf("%d ",cohist[printIndex]);
-                    }
-                
 
                 //ir buscar os arrays de historico
 
@@ -420,7 +428,7 @@ int emulateSensors(){
 
     // History handling
  
-    if(histIndex>19){
+    if(histIndex>3){
         histIndex=0;
         //nao vao estar por ordem apos completar o array pela primeira vez
     }
