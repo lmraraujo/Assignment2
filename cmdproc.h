@@ -20,10 +20,10 @@
 #define CHECKSUM_ERROR -6
 
 // Supported commands
-#define CMD_READ_ALL 'A'
-#define CMD_READ_SENSOR 'P'
-#define CMD_READ_LAST_SAMPLES 'L'
-#define CMD_RESET_HISTORY 'R'
+#define CMD_READ_ALL 'a'
+#define CMD_READ_SENSOR 'p'
+#define CMD_READ_LAST_SAMPLES 'l'
+#define CMD_RESET_HISTORY 'r'
 
 // Sensor data limits
 #define TEMP_MIN -50
@@ -32,6 +32,11 @@
 #define HUMIDITY_MAX 100
 #define CO2_MIN 400
 #define CO2_MAX 20000
+
+static unsigned char UARTTxBuff[UART_TX_SIZE];
+static unsigned char UARTRxBuff[UART_RX_SIZE];
+static unsigned char rxBufflen=0;
+static unsigned char txBufflen=0;
 
 int cmdProc(void);
 
@@ -43,7 +48,7 @@ void resetRxBuff(void);
 
 void resetTxBuff(void);
 
-void getTxBuff(unsigned char *buf, int *len);
+void getTxBuff(unsigned char *buf, int len);
 
 int calcChecksum(unsigned char *buf, int nbytes);
 

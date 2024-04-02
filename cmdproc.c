@@ -4,21 +4,20 @@
 
 #include "cmdproc.h"
 
-static unsigned char UARTRxBuff[UART_RX_SIZE];
-static unsigned char rxBufflen=0;
 
-static unsigned char UARTTxBuff[UART_TX_SIZE];
-static unsigned char txBufflen=0;
+
 
 int temphist[HISTORY];
 int humhist[HISTORY];
 int cohist[HISTORY];
 int histIndex = 0;
 
+static unsigned char auxBuff[20];
+
 // Init sensors with mean value
-int temperature = (TEMP_MIN + TEMP_MAX) / 2;
-int humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;
-int co2 = (CO2_MIN + CO2_MAX) / 2;
+int temperature = (TEMP_MIN + TEMP_MAX) / 2; //5 A-15,V-13,G-11,Al-18
+int humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;//50 A-60, V-40, G-55, Al-35
+int co2 = (CO2_MIN + CO2_MAX) / 2;//10200 A-500, V-300, G-400, Al-450
 
 int cmdProc(void)
 {
@@ -27,6 +26,7 @@ int cmdProc(void)
     int countc=0;
     int countt=0;
     unsigned char sid;  //ID do sensor se é hum temp ou co2
+    unsigned char processing;
 
     if (rxBufflen == 0) return EMPTY_STRING;
 
@@ -35,7 +35,31 @@ int cmdProc(void)
     }
 
     if (i < rxBufflen){
-
+        unsigned char regiao= UARTRxBuff[i+3];
+        switch(regiao){
+                    case '1'://aveiro
+                        temperature+=10;
+                        humidity+=10;
+                        co2-=9700;
+                        break;
+                    case '2'://viseu
+                        temperature+=8;
+                        humidity-=10;
+                        co2-=9900;
+                        break;
+                    case '3'://guarda
+                        temperature+=6;
+                        humidity+=5;
+                        co2-=9800;
+                        break;
+                    case '4'://algarve
+                        temperature+=13;
+                        humidity-=15;
+                        co2-=9750;
+                        break;
+                }
+                
+        
         switch(UARTRxBuff[i+1]){
 
             case CMD_READ_SENSOR:    
@@ -49,93 +73,135 @@ int cmdProc(void)
 					return COMMAND_ERROR;
 				}
 
-                if(UARTRxBuff[i+6] != EOF_SYM) {
+                if(UARTRxBuff[i+5] != END_OF_FRAME) {
 					return STRING_ERROR;
 				}
-                
+             
+
+
                 emulateSensors(); // emulate values from the sensor
                 
                 
 
                 int l=0;
-                int p;
+                int p=0;
+                for(l=0;l<UART_TX_SIZE;l++){
+                printf("%c ",UARTTxBuff[l]);}
 
                 if(sid == 't'){
-                   for(int l=0; l<txBufflen;l++){
-                      
-                    if (UARTTxBuff[l] == 'h'||counth>0||counth<4){
-                        UARTTxBuff[l] ='\0';
-                        counth++;
-                        if(counth==4){
-                            l=l-4;
-                            p=l;
-                            while(p<txBufflen-4){
 
-                                UARTTxBuff[p]=UARTTxBuff[p+4];
-                                p++;
-                            }
+                    for(l=0;l<UART_TX_SIZE;l++){
+                        if((counth>0 && counth<4)|| UARTTxBuff[l]=='h'){
+                            counth++;
+                        }
+                        else if((countc>0 && countc<6)|| UARTTxBuff[l]=='c'){
+                            countc++;
+                        }
+                        else{
+                            auxBuff[p]= UARTTxBuff[l];
+                            p++;
                         }
                     }
-                    if (UARTTxBuff[l] == 'c'||countc>0||countc<6){
-                        UARTTxBuff[l] ='\0';
-                        countc++;
-                        if(countc==6){
-                            l=l-6;
-                            p=l;
-                            while(p<txBufflen-6){
+                    resetTxBuff();
+                    
+                    processing= UARTRxBuff[i+4];
+                    if(processing=='1'){
+                        for(l=0;l<UART_TX_SIZE;l++){
+                            printf("%c ",auxBuff[l]);
+                            }
 
-                                UARTTxBuff[p]=UARTTxBuff[p+6];
-                                p++;
+                    }
+                    else if(processing=='2'){
+                        if(regiao=='1'){
+                            printf("\nO sensor presente em Aveiro enviou os seguintes dados:\n");
+                            if(sid=='t'){
+                                printf("Temperatura: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
                             }
-                            while(p<txBufflen){
-                                UARTTxBuff[p]='\0';
-                                p++;
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
+                        }
+                        if(regiao=='2'){
+                            printf("\nO sensor presente em Viseu enviou os seguintes dados:\n");
+                            if(sid=='t'){
+                                printf("Temperatura: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
                             }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
+                        }
+                        if(regiao=='3'){
+                            printf("\nO sensor presente na Guarda enviou os seguintes dados:\n");
+                            if(sid=='t'){
+                                printf("Temperatura: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
+                            }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
+                        }
+                        if(regiao=='4'){
+                            printf("\nO sensor presente no Algarve enviou os seguintes dados:\n");
+                            if(sid=='t'){
+                                printf("Temperatura: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
+                            }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
                         }
                     }
+                    
 
-                   }
                 }
 
 
 
-
+                p=0;
                 if(sid == 'h'){
 
-                   for(int l=0; l<txBufflen;l++){
-                      
-                    if (UARTTxBuff[l] == 't'||countt>0||countt<4){
-                        UARTTxBuff[l] ='\0';
-                        countt++;
-                        if(countt==4){
-                            l=l-4;
-                            p=l;
-                            while(p<txBufflen-4){
-
-                                UARTTxBuff[p]=UARTTxBuff[p+4];
-                                p++;
-                            }
+                  for(l=0;l<UART_TX_SIZE;l++){
+                        if((countt>0 && countt<4)|| UARTTxBuff[l]=='t'){
+                            countt++;
+                        }
+                        else if((countc>0 && countc<6)|| UARTTxBuff[l]=='c'){
+                            countc++;
+                        }
+                        else{
+                            auxBuff[p]= UARTTxBuff[l];
+                            p++;
                         }
                     }
-                    if (UARTTxBuff[l] == 'c'||countc>0||countc<6){
-                        UARTTxBuff[l] ='\0';
-                        countc++;
-                        if(countc==6){
-                            l=l-6;
-                            p=l;
-                            while(p<txBufflen-6){
+                    resetTxBuff();
+                    processing= UARTRxBuff[i+4];
+                    if(processing=='1'){
+                        for(l=0;l<UART_TX_SIZE;l++){
+                            printf("%c ",auxBuff[l]);
+                            }
 
-                                UARTTxBuff[p]=UARTTxBuff[p+6];
-                                p++;
+                    }
+                    else if(processing=='2'){
+                        if(regiao=='1'){
+                            printf("\nO sensor presente em Aveiro enviou os seguintes dados:\n");
+                            if(sid=='h'){
+                                printf("Humidade: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
                             }
-                            while(p<txBufflen){
-                                UARTTxBuff[p]='\0';
-                                p++;
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
+                        }
+                        if(regiao=='2'){
+                            printf("\nO sensor presente em Viseu enviou os seguintes dados:\n");
+                            if(sid=='h'){
+                                printf("Humidade: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
                             }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
+                        }
+                        if(regiao=='3'){
+                            printf("\nO sensor presente na Guarda enviou os seguintes dados:\n");
+                            if(sid=='h'){
+                                printf("Humidade: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
+                            }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
+                        }
+                        if(regiao=='4'){
+                            printf("\nO sensor presente no Algarve enviou os seguintes dados:\n");
+                            if(sid=='h'){
+                                printf("Humidade: %c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5]);
+                            }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
                         }
                     }
+                    
 
-                   }
 
                     
                 }
@@ -143,55 +209,110 @@ int cmdProc(void)
 
 
 
-
+                p=0;
                 if(sid == 'c'){
-                    for(int l=0; l<txBufflen;l++){
-                      
-                    if (UARTTxBuff[l] == 't'||countt>0||countt<4){
-                        UARTTxBuff[l] ='\0';
-                        countt++;
-                        if(countt==4){
-                            l=l-4;
-                            p=l;
-                            while(p<txBufflen-4){
-
-                                UARTTxBuff[p]=UARTTxBuff[p+4];
-                                p++;
-                            }
+                    for(l=0;l<UART_TX_SIZE;l++){
+                        if((counth>0 && counth<4)|| UARTTxBuff[l]=='t'){
+                            counth++;
+                        }
+                        else if((countc>0 && countc<4)|| UARTTxBuff[l]=='h'){
+                            countc++;
+                        }
+                        else{
+                            auxBuff[p]= UARTTxBuff[l];
+                            p++;
                         }
                     }
-                    if (UARTTxBuff[l] == 'h'||counth>0||counth<4){
-                        UARTTxBuff[l] ='\0';
-                        counth++;
-                        if(counth==4){
-                            l=l-4;
-                            p=l;
-                            while(p<txBufflen-4){
+                    resetTxBuff();
+                    processing= UARTRxBuff[i+4];
+                    if(processing=='1'){
+                        for(l=0;l<UART_TX_SIZE;l++){
+                            printf("%c ",auxBuff[l]);
+                            }
 
-                                UARTTxBuff[p]=UARTTxBuff[p+4];
-                                p++;
+                    }
+                    else if(processing=='2'){
+                        if(regiao=='1'){
+                            printf("\nO sensor presente em Aveiro enviou os seguintes dados:\n");
+                            if(sid=='c'){
+                                printf("Co2: %c%c%c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5], auxBuff[6], auxBuff[7]);
                             }
-                            while(p<txBufflen){
-                                UARTTxBuff[p]='\0';
-                                p++;
+                            printf("Checksum: %c%c%c\n",auxBuff[8], auxBuff[9], auxBuff[10]);
+                        }
+                        if(regiao=='2'){
+                            printf("\nO sensor presente em Viseu enviou os seguintes dados:\n");
+                            if(sid=='c'){
+                                printf("Co2: %c%c%c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5], auxBuff[6], auxBuff[7]);
                             }
+                            printf("Checksum: %c%c%c\n",auxBuff[8], auxBuff[9], auxBuff[10]);
+                        }
+                        if(regiao=='3'){
+                            printf("\nO sensor presente na Guarda enviou os seguintes dados:\n");
+                            if(sid=='c'){
+                                printf("Co2: %c%c%c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5], auxBuff[6], auxBuff[7]);
+                            }
+                            printf("Checksum: %c%c%c\n",auxBuff[8], auxBuff[9], auxBuff[10]);
+                        }
+                        if(regiao=='4'){
+                            printf("\nO sensor presente no Algarve enviou os seguintes dados:\n");
+                            if(sid=='c'){
+                               printf("Co2: %c%c%c%c%c\n",auxBuff[3], auxBuff[4], auxBuff[5], auxBuff[6], auxBuff[7]);
+                            }
+                            printf("Checksum: %c%c%c\n",auxBuff[6], auxBuff[7], auxBuff[8]);
                         }
                     }
-
                     
                 }
-
                 return SUCCESS;  
 
             case CMD_READ_ALL:
                 
                 emulateSensors();
+                processing= UARTRxBuff[i+4];
+                if(processing == '1'){
+                    for(l=0;l<UART_TX_SIZE;l++){
+                        printf("%c ",UARTTxBuff[l]);
+                        }
+                }
+                else if(processing == '2'){
+                        if(regiao=='1'){
+                            printf("\nO sensor presente em Aveiro enviou os seguintes dados:\n");
+                        }
+                        if(regiao=='2'){
+                            printf("\nO sensor presente em Viseu enviou os seguintes dados:\n");
+                           
+                        }
+                        if(regiao=='3'){
+                            printf("\nO sensor presente na Guarda enviou os seguintes dados:\n");
+                        }
+                        if(regiao=='4'){
+                            printf("\nO sensor presente no Algarve enviou os seguintes dados:\n");
+                        }
+                        printf("Temperatura: %c%c%c\n",UARTTxBuff[3],UARTTxBuff[4],UARTTxBuff[5]);
+                        printf("Humidade: %c%c%c\n",UARTTxBuff[7],UARTTxBuff[8],UARTTxBuff[9]);
+                        printf("Co2: %c%c%c%c%c\n",UARTTxBuff[11],UARTTxBuff[12],UARTTxBuff[13],UARTTxBuff[14],UARTTxBuff[15]);
 
+                }
                 return SUCCESS;  
 
             case CMD_READ_LAST_SAMPLES:
                 
-                emulatesensors();
+                
+                int printIndex;
+               
+                    printf("\nTemperatura: ");
+                    for(printIndex=0;printIndex<histIndex;printIndex++){
+                        printf("%d ",temphist[printIndex]);
+                    }
+                    printf("\nHumidade: ");
+                    for(printIndex=0;printIndex<histIndex;printIndex++){
+                        printf("%d ",humhist[printIndex]);
+                    }
+                    printf("\nCo2: ");
+                    for(printIndex=0;printIndex<histIndex;printIndex++){
+                        printf("%d ",cohist[printIndex]);
+                    }
+                
 
                 //ir buscar os arrays de historico
 
@@ -206,7 +327,10 @@ int cmdProc(void)
                     histIndex=0;
                 }
 
-                return SUCCESS;    
+                return SUCCESS; 
+            
+
+
 
             default:
                 return COMMAND_INVALID;
@@ -217,10 +341,10 @@ int cmdProc(void)
         }
 
           }
-    
-    }
     return STRING_ERROR;
-}
+    }
+    
+
 
 
 int rxChar(unsigned char car)
@@ -267,15 +391,15 @@ void resetTxBuff(void)
     txBufflen = 0;		
 }
 
-void getTxBuff(unsigned char * buf, int * len)
+void getTxBuff(unsigned char * buf, int len)
 {
     // Copy the length of the TX buffer to the variable pointed to by len
-    *len = txBufflen;
+    len = txBufflen;
     
     // Check if the TX buffer contains any data
     if (txBufflen > 0) {
         // If the buffer is not empty, copy its contents to the buffer pointed to by buf
-        memcpy(buf, UARTTxBuff, *len);
+        memcpy(buf, UARTTxBuff, len);
     }		
 }
 
@@ -318,75 +442,61 @@ int emulateSensors(){
     if(UARTRxBuff[i+1] == 'p'){
         txChar('p');
         len++;
-    }
-    if(UARTRxBuff[i+1] == 'a'){
-        txChar('a');
+        txChar('t');
         len++;
-    }
-    if(UARTRxBuff[i+1] == 'l'){
-        txChar('l');
+        
+        // Convert and transmit the sign for temperature
+        if (temperature >= 0) {
+            txChar('+');
+        } else {
+            txChar('-');
+            temperature = -temperature; // Make temperature positive for further processing
+        }
+        len++; // Increment length
+
+        // Transmit temperature value
+        txChar('0' + (temperature / 10)); // Tens digit
         len++;
-    }
-    if(UARTRxBuff[i+1] == 'r'){
-        txChar('r');
+        txChar('0' + (temperature % 10)); // Units digit
         len++;
-    }
+        txChar('h');
+        len++;
 
-    txChar('t');
-    len++;
+        // Convert and transmit humidity
+        txChar('0' + (humidity / 100)); // Hundreds digit
+        len++;
+        txChar('0' + ((humidity / 10) % 10)); // Tens digit
+        len++;
+        txChar('0' + (humidity % 10)); // Units digit
+        len++;
 
-    // Convert and transmit the sign for temperature
-    if (temperature >= 0) {
-        txChar('+');
-    } else {
-        txChar('-');
-        temperature = -temperature; // Make temperature positive for further processing
-    }
-    len++; // Increment length
+        txChar('c');
+        len++;
 
-    // Transmit temperature value
-    txChar('0' + (temperature / 10)); // Tens digit
-    len++;
-    txChar('0' + (temperature % 10)); // Units digit
-    len++;
+        // Convert and transmit CO2 level
+        txChar('0' + (co2 / 10000)); // Ten-thousands digit
+        len++;
+        txChar('0' + ((co2 / 1000) % 10)); // Thousands digit
+        len++;
+        txChar('0' + ((co2 / 100) % 10)); // Hundreds digit
+        len++;
+        txChar('0' + ((co2 / 10) % 10)); // Tens digit
+        len++;
+        txChar('0' + (co2 % 10)); // Units digit
+        len++;
 
-    txChar('h');
-    len++;
+        int lencheck=len;
 
-    // Convert and transmit humidity
-    txChar('0' + (humidity / 100)); // Hundreds digit
-    len++;
-    txChar('0' + ((humidity / 10) % 10)); // Tens digit
-    len++;
-    txChar('0' + (humidity % 10)); // Units digit
-    len++;
+        txChar('!'); // End of frame        
+        len++;       // Increment length
 
-    txChar('c');
-    len++;
-
-    // Convert and transmit CO2 level
-    txChar('0' + (co2 / 10000)); // Ten-thousands digit
-    len++;
-    txChar('0' + ((co2 / 1000) % 10)); // Thousands digit
-    len++;
-    txChar('0' + ((co2 / 100) % 10)); // Hundreds digit
-    len++;
-    txChar('0' + ((co2 / 10) % 10)); // Tens digit
-    len++;
-    txChar('0' + (co2 % 10)); // Units digit
-    len++;
-
-    int lencheck=len;
-
-    txChar('!'); // End of frame        
-    len++;       // Increment length
-    
-    int checkin = calcChecksum(UARTTxBuff, lencheck);
+int checkin = calcChecksum(UARTTxBuff, lencheck);
 
     int checkot = calcChecksum(UARTTxBuff, lencheck);
     if (checkin==checkot){
        
-        UARTTxBuff[len]='0' + (checkot / 100)//tinha aqui len1 ja ns oq era
+        
+        UARTTxBuff[lencheck]='0' + (checkot / 100);//tinha aqui len1 ja ns oq era
         txChar('0' + ((checkot / 10) % 10)); // Tens digit
         len++;
         txChar('0' + (checkot % 10)); // Units digit
@@ -394,7 +504,7 @@ int emulateSensors(){
         txChar('!'); // End of frame        
         len++;       // Increment length
         // If the buffer is not full, fill the remaining spaces with null characters
-        for (int k = len; i < UART_TX_SIZE; k++) {
+        for (int k = len; k< UART_TX_SIZE; k++) {
         txChar('\0');
         }
         checkot = calcChecksum(UARTTxBuff, lencheck);
@@ -408,13 +518,108 @@ int emulateSensors(){
         return CHECKSUM_ERROR;
     }
 
-}
+    }
+    
+    
+    if(UARTRxBuff[i+1] == 'a'){
+        txChar('a');
+        len++;
+        txChar('t');
+        len++;
+        
+        // Convert and transmit the sign for temperature
+        if (temperature >= 0) {
+            txChar('+');
+        } else {
+            txChar('-');
+            temperature = -temperature; // Make temperature positive for further processing
+        }
+        len++; // Increment length
+
+        // Transmit temperature value
+        txChar('0' + (temperature / 10)); // Tens digit
+        len++;
+        txChar('0' + (temperature % 10)); // Units digit
+        len++;
+        txChar('h');
+        len++;
+
+        // Convert and transmit humidity
+        txChar('0' + (humidity / 100)); // Hundreds digit
+        len++;
+        txChar('0' + ((humidity / 10) % 10)); // Tens digit
+        len++;
+        txChar('0' + (humidity % 10)); // Units digit
+        len++;
+
+        txChar('c');
+        len++;
+
+        // Convert and transmit CO2 level
+        txChar('0' + (co2 / 10000)); // Ten-thousands digit
+        len++;
+        txChar('0' + ((co2 / 1000) % 10)); // Thousands digit
+        len++;
+        txChar('0' + ((co2 / 100) % 10)); // Hundreds digit
+        len++;
+        txChar('0' + ((co2 / 10) % 10)); // Tens digit
+        len++;
+        txChar('0' + (co2 % 10)); // Units digit
+        len++;
+
+        int lencheck=len;
+
+        txChar('!'); // End of frame        
+        len++;       // Increment length
+
+int checkin = calcChecksum(UARTTxBuff, lencheck);
+
+    int checkot = calcChecksum(UARTTxBuff, lencheck);
+    if (checkin==checkot){
+       
+        UARTTxBuff[lencheck]='0' + (checkot / 100);//tinha aqui len1 ja ns oq era
+        txChar('0' + ((checkot / 10) % 10)); // Tens digit
+        len++;
+        txChar('0' + (checkot % 10)); // Units digit
+        len++;
+        txChar('!'); // End of frame        
+        len++;       // Increment length
+        // If the buffer is not full, fill the remaining spaces with null characters
+        for (int k = len; k< UART_TX_SIZE; k++) {
+        txChar('\0');
+        }
+        checkot = calcChecksum(UARTTxBuff, lencheck);
+        if (checkin==checkot){
+           return SUCCESS;
+        }
+        else return CHECKSUM_ERROR;
+        
+    }
+    else{
+        return CHECKSUM_ERROR;
+    }
+        
+    }
+    if(UARTRxBuff[i+1] == 'l'){
+        txChar('l');//ver dps
+        len++;
+    }
+    else{
+        return COMMAND_INVALID;
+        }
+
+
+        
+    }
+    
+
+
 int calcChecksum(unsigned char *buf, int nbytes) {
      // Compute the checksum as the sum of the numerical value of each byte in the buffer
     int checksum = 0;
     for (int i = 1; i < nbytes; i++) {
-        
-        checksum += buf[i];
+        if(buf[i]!='!') checksum += buf[i];
+        else checksum+=0;
     }
 
     // Compute the modulo 256 checksum
