@@ -110,7 +110,7 @@ int cmdProc(void)
 					return COMMAND_ERROR;
 				}
 
-                if(UARTRxBuff[i+8] != END_OF_FRAME) {
+                if(UARTRxBuff[8] != END_OF_FRAME) {
 					return STRING_ERROR;
 				}
              
@@ -622,9 +622,9 @@ int emulateSensors(){
         txChar('l');
         len++;
     }
-    else{
-        return COMMAND_INVALID;
-        }
+    
+    return COMMAND_INVALID;
+        
    
 }
     
