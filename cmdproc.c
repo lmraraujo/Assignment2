@@ -29,15 +29,18 @@ int cmdProc(void)
     int countc=0;
     int countt=0;
     unsigned char sid;  //ID do sensor se é hum temp ou co2
+    unsigned char bit1;
     unsigned char processing;
 
     if (rxBufflen == 0) return EMPTY_STRING;
 
     
     if(UARTRxBuff[0] != START_OF_FRAME) return COMMAND_INVALID;
-    printf("%c", UARTRxBuff[2]);
+   
+    sid = UARTRxBuff[2];
+    bit1 = UARTRxBuff[1];
 
-    switch (UARTRxBuff[2]){
+    switch (sid){
                     case 't':
                         break;
                     case 'h':
@@ -47,6 +50,18 @@ int cmdProc(void)
                     default:
                         return COMMAND_INVALID;
                 }
+    switch(bit1){
+                    case 'a':
+                        break;
+                    case 'p':
+                        break;
+                    case 'l':
+                        break;
+                    case 'r':
+                        break;
+                    default:
+                        return COMMAND_INVALID;
+    }
         
     
 
@@ -91,15 +106,13 @@ int cmdProc(void)
 
         check_entrada+=atoi(string);
 
-        printf("%d",check_entrada);
+    
 
         if(calcChecksum(UARTRxBuff,5)==check_entrada)printf("\nChecksum correto,(transmissao bem sucedida)\n");
         else{ 
-
-            
-            return -8;
+            return CHECKSUM_ERROR;
         }
-        
+        if(UARTRxBuff[1]=='f') return COMMAND_INVALID; 
         switch(UARTRxBuff[1]){
 
             case CMD_READ_SENSOR:    
@@ -328,7 +341,7 @@ int cmdProc(void)
                         printf("Co2: %c%c%c%c%c\n",UARTTxBuff[11],UARTTxBuff[12],UARTTxBuff[13],UARTTxBuff[14],UARTTxBuff[15]);
 
                 }
-                return -9;  
+                return SUCCESS;  
 
             case CMD_READ_LAST_SAMPLES:
                 
@@ -355,7 +368,7 @@ int cmdProc(void)
 
                 //ir buscar os arrays de historico
 
-                return -10;  
+                return SUCCESS;  
 
             case CMD_RESET_HISTORY:
                 
@@ -366,7 +379,7 @@ int cmdProc(void)
                     histIndex=0;
                 }
 
-                return -11; 
+                return SUCCESS; 
             
 
 
@@ -374,7 +387,8 @@ int cmdProc(void)
             default:
                 return COMMAND_INVALID;
         }
-            if(UARTRxBuff[i+1]!= 'p' && UARTRxBuff[i+1]!= 'a' && UARTRxBuff[i+1]!= 'l' && UARTRxBuff[i+1]!= 'r') return COMMAND_INVALID;
+    
+        if(UARTRxBuff[1]!= 'p' && UARTRxBuff[1]!= 'a' && UARTRxBuff[1]!= 'l' && UARTRxBuff[1]!= 'r') return COMMAND_INVALID;
 
           
         return STRING_ERROR;
@@ -547,12 +561,10 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
            return SUCCESS;
         }
         else {
-            printf("2");
             return CHECKSUM_ERROR;
         }
     }
     else{
-        printf("3");
         return CHECKSUM_ERROR;
     }
 
@@ -632,14 +644,12 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
         }
         else 
         {
-            printf("4");
             return CHECKSUM_ERROR;
             
         }
         
     }
     else{
-        printf("5");
         return CHECKSUM_ERROR;
     }
         

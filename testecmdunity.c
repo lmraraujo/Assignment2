@@ -43,6 +43,26 @@ void tearDown(void) {
 
 }
 
+void test_cmdProc_Invalid(void) {
+    // Test cmdProc with a valid command
+    // Example: '#At+023h042c12345!' should return SUCCESS
+    unsigned char command[] = "#ft42090!";
+    for (int i = 0; i < strlen(command); i++) {
+        TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
+    }
+    TEST_ASSERT_EQUAL_INT(COMMAND_INVALID, cmdProc());
+}
+
+void test_cmdProc_Success(void) {
+    // Test cmdProc with a valid command
+    // Example: '#at+023h042c12345!' should return SUCCESS
+    unsigned char command[] = "#pt12071!";
+    for (int i = 0; i < strlen(command); i++) {
+        TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
+    }
+    TEST_ASSERT_EQUAL_INT(SUCCESS, cmdProc());
+}
+
 
 void test_rxChar_Success(void) {
     // Test rxChar with a valid character
@@ -74,38 +94,19 @@ void test_calcChecksum_Success(void) {
     TEST_ASSERT_EQUAL_INT(57, calcChecksum(buf, nbytes));
 }
 
-void test_cmdProc_Success(void) {
-    // Test cmdProc with a valid command
-    // Example: '#at+023h042c12345!' should return SUCCESS
-    unsigned char command[] = "#pt12071!";
-    for (int i = 0; i < strlen(command); i++) {
-        TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
-    }
-    TEST_ASSERT_EQUAL_INT(SUCCESS, cmdProc());
-}
 
-
-void test_cmdProc_Invalid(void) {
-    // Test cmdProc with a valid command
-    // Example: '#At+023h042c12345!' should return SUCCESS
-    unsigned char command[] = "#ft12!";
-    for (int i = 0; i < strlen(command); i++) {
-        TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
-    }
-    TEST_ASSERT_EQUAL_INT(COMMAND_INVALID, cmdProc());
-}
 
 
 
 int main(void) {
     UNITY_BEGIN();
     // Run tests
+    RUN_TEST(test_cmdProc_Success);
     RUN_TEST(test_rxChar_Success);
     RUN_TEST(test_txChar_Success);
     RUN_TEST(test_resetRxBuff_Success);
     RUN_TEST(test_resetTxBuff_Success);
     RUN_TEST(test_calcChecksum_Success);
-    RUN_TEST(test_cmdProc_Success);
     RUN_TEST(test_cmdProc_Invalid);
     UNITY_END();
 }
