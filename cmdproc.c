@@ -33,9 +33,10 @@ int cmdProc(void)
 
     if (rxBufflen == 0) return EMPTY_STRING;
 
-    for (i=0; i<rxBufflen; i++){
-        if(UARTRxBuff[i] == START_OF_FRAME) break;
-    }
+    
+    if(UARTRxBuff[0] != START_OF_FRAME) return COMMAND_INVALID;
+        
+    
 
     temperature = (TEMP_MIN + TEMP_MAX) / 2; //5 A-15,V-13,G-11,Al-18
     humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;//50 A-60, V-40, G-55, Al-35
@@ -79,9 +80,14 @@ int cmdProc(void)
 
         check_entrada+=atoi(string);
 
-        if(calcChecksum(UARTRxBuff,5)==check_entrada)printf("\nChecksum correto,(transmissao bem sucedida)\n");
-        else return CHECKSUM_ERROR;
+        printf("%d",check_entrada);
 
+        if(calcChecksum(UARTRxBuff,5)==check_entrada)printf("\nChecksum correto,(transmissao bem sucedida)\n");
+        else{ 
+
+            
+            return -8;
+        }
         
         switch(UARTRxBuff[i+1]){
 
@@ -108,8 +114,8 @@ int cmdProc(void)
 
                 int l=0;
                 int p=0;
-                for(l=0;l<UART_TX_SIZE;l++){
-                printf("%c ",UARTTxBuff[l]);}
+                //for(l=0;l<UART_TX_SIZE;l++){
+                //printf("%c ",UARTTxBuff[l]);}
 
                 if(sid == 't'){
 
@@ -316,7 +322,7 @@ int cmdProc(void)
                         printf("Co2: %c%c%c%c%c\n",UARTTxBuff[11],UARTTxBuff[12],UARTTxBuff[13],UARTTxBuff[14],UARTTxBuff[15]);
 
                 }
-                return SUCCESS;  
+                return -9;  
 
             case CMD_READ_LAST_SAMPLES:
                 
@@ -343,7 +349,7 @@ int cmdProc(void)
 
                 //ir buscar os arrays de historico
 
-                return SUCCESS;  
+                return -10;  
 
             case CMD_RESET_HISTORY:
                 
@@ -354,7 +360,7 @@ int cmdProc(void)
                     histIndex=0;
                 }
 
-                return SUCCESS; 
+                return -11; 
             
 
 
@@ -534,10 +540,13 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
         if (checkin==checkot){
            return SUCCESS;
         }
-        else return CHECKSUM_ERROR;
-        
+        else {
+            printf("2");
+            return CHECKSUM_ERROR;
+        }
     }
     else{
+        printf("3");
         return CHECKSUM_ERROR;
     }
 
@@ -615,10 +624,16 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
         if (checkin==checkot){
            return SUCCESS;
         }
-        else return CHECKSUM_ERROR;
+        else 
+        {
+            printf("4");
+            return CHECKSUM_ERROR;
+            
+        }
         
     }
     else{
+        printf("5");
         return CHECKSUM_ERROR;
     }
         
@@ -641,7 +656,7 @@ int calcChecksum(unsigned char *buf, int nbytes) {
      // Compute the checksum as the sum of the numerical value of each byte in the buffer
     int checksum = 0;
     for (int i = 1; i < nbytes; i++) {
-        if(buf[i]!='!') checksum += buf[i];
+        if(buf[i]!='!' && buf[i]!='#'&& buf[i]!='\0')  checksum += buf[i];
         else checksum+=0;
     }
 
