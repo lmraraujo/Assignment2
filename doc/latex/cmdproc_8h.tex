@@ -1,0 +1,351 @@
+\hypertarget{cmdproc_8h}{}\doxysection{cmdproc.\+h File Reference}
+\label{cmdproc_8h}\index{cmdproc.h@{cmdproc.h}}
+
+
+Header file for command processing module.  
+
+
+This graph shows which files directly or indirectly include this file\+:
+% FIG 0
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a7e4912ef6d5612f8ebca463ff206d9ce}{UART\+\_\+\+RX\+\_\+\+SIZE}}~20
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a7bd31e3844f5461db2cbe6d906ca4040}{UART\+\_\+\+TX\+\_\+\+SIZE}}~20
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a8a4c48612df951af1b7f066b47950b2f}{HISTORY}}~20
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_ab8841f4d2a70b13d159a8c607c71b66f}{START\+\_\+\+OF\+\_\+\+FRAME}}~\textquotesingle{}\#\textquotesingle{}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a0f07f12ba8949770acfc44890d300eb0}{END\+\_\+\+OF\+\_\+\+FRAME}}~\textquotesingle{}!\textquotesingle{}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_aa90cac659d18e8ef6294c7ae337f6b58}{SUCCESS}}~0
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a4cc630b5a4ac206fbcb8794c4fcd8529}{EMPTY\+\_\+\+STRING}}~-\/1
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_ab4f53aba70048d2dc563f83e34860225}{COMMAND\+\_\+\+INVALID}}~-\/2
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a755c019733af60e8024e12a74b2f8650}{COMMAND\+\_\+\+ERROR}}~-\/3
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a39575505cf8f769ab978b079efcc5ae1}{STRING\+\_\+\+ERROR}}~-\/4
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_adbc61839f796855d7e5712e3223e091f}{FULL\+\_\+\+BUFFER}}~-\/5
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a066160741e06e94e9a4ed33b0d18f5ae}{CHECKSUM\+\_\+\+ERROR}}~-\/6
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a3c8499e80fbb9d61c35a1c0d99dc903b}{EMPTY\+\_\+\+BUFFER}}~-\/7
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a7d84cc061a6b54c5418e99734a903776}{CMD\+\_\+\+READ\+\_\+\+ALL}}~\textquotesingle{}a\textquotesingle{}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a56d05601da8438bda9664c2030db9881}{CMD\+\_\+\+READ\+\_\+\+SENSOR}}~\textquotesingle{}p\textquotesingle{}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a529623be841ddfd0407ef8342379559d}{CMD\+\_\+\+READ\+\_\+\+LAST\+\_\+\+SAMPLES}}~\textquotesingle{}l\textquotesingle{}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_aa0d1decc068e2185edb35564d0806a3d}{CMD\+\_\+\+RESET\+\_\+\+HISTORY}}~\textquotesingle{}r\textquotesingle{}
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_ad7d20c7d1ec1729bf6892ddabbac3ab0}{TEMP\+\_\+\+MIN}}~-\/50
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a9acb14595bfb9523655370c1bb477506}{TEMP\+\_\+\+MAX}}~60
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a50baad14fa17c79e891d153605301b2c}{HUMIDITY\+\_\+\+MIN}}~0
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a970046dc24185b03aab6ea549a67761e}{HUMIDITY\+\_\+\+MAX}}~100
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_af891bd4e613223023504f41b00ae59bd}{CO2\+\_\+\+MIN}}~400
+\item 
+\#define \mbox{\hyperlink{cmdproc_8h_a6bb4f467d4249793cccf672c4c04c71a}{CO2\+\_\+\+MAX}}~20000
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{cmdproc_8h_aced3facd7540036687482d443d6aecde}{cmd\+Proc}} (void)
+\begin{DoxyCompactList}\small\item\em Process the received command. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cmdproc_8h_a67ae8a79a708a3c5471668bddbd16400}{rx\+Char}} (unsigned char car)
+\begin{DoxyCompactList}\small\item\em Receive a character via UART. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cmdproc_8h_abdb4363f0662688850bbcdfb59ce4566}{tx\+Char}} (unsigned char car)
+\begin{DoxyCompactList}\small\item\em Transmit a character via UART. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cmdproc_8h_ab3dc8254662edb9636c570e6e0ee1e4b}{reset\+Rx\+Buff}} (void)
+\begin{DoxyCompactList}\small\item\em Reset the UART receive buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cmdproc_8h_a471840a9a7e0abf8108d3957a683e618}{reset\+Tx\+Buff}} (void)
+\begin{DoxyCompactList}\small\item\em Reset the UART transmit buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cmdproc_8h_a82e747b7eb571c6b45aa1f5b396e9a2d}{get\+Tx\+Buff}} (unsigned char $\ast$buf, int len)
+\begin{DoxyCompactList}\small\item\em Get the UART transmit buffer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cmdproc_8h_a2a0e03d8d8ff0f0459f7623ffd6d39b1}{calc\+Checksum}} (unsigned char $\ast$buf, int nbytes)
+\begin{DoxyCompactList}\small\item\em Calculate the checksum of a buffer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cmdproc_8h_adce8b854db6da5fa35f860561f6272e2}{emulate\+Sensors}} ()
+\begin{DoxyCompactList}\small\item\em Emulate sensor readings and process received commands. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Header file for command processing module. 
+
+\begin{DoxyAuthor}{Authors}
+Luís Araújo, Bernardo Modesto 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+9 Abril 2024 
+\end{DoxyDate}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{cmdproc_8h_a066160741e06e94e9a4ed33b0d18f5ae}\label{cmdproc_8h_a066160741e06e94e9a4ed33b0d18f5ae}} 
+\index{cmdproc.h@{cmdproc.h}!CHECKSUM\_ERROR@{CHECKSUM\_ERROR}}
+\index{CHECKSUM\_ERROR@{CHECKSUM\_ERROR}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CHECKSUM\_ERROR}{CHECKSUM\_ERROR}}
+{\footnotesize\ttfamily \#define CHECKSUM\+\_\+\+ERROR~-\/6}
+
+Error code for checksum mismatch \mbox{\Hypertarget{cmdproc_8h_a7d84cc061a6b54c5418e99734a903776}\label{cmdproc_8h_a7d84cc061a6b54c5418e99734a903776}} 
+\index{cmdproc.h@{cmdproc.h}!CMD\_READ\_ALL@{CMD\_READ\_ALL}}
+\index{CMD\_READ\_ALL@{CMD\_READ\_ALL}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CMD\_READ\_ALL}{CMD\_READ\_ALL}}
+{\footnotesize\ttfamily \#define CMD\+\_\+\+READ\+\_\+\+ALL~\textquotesingle{}a\textquotesingle{}}
+
+Command to read all sensor values \mbox{\Hypertarget{cmdproc_8h_a529623be841ddfd0407ef8342379559d}\label{cmdproc_8h_a529623be841ddfd0407ef8342379559d}} 
+\index{cmdproc.h@{cmdproc.h}!CMD\_READ\_LAST\_SAMPLES@{CMD\_READ\_LAST\_SAMPLES}}
+\index{CMD\_READ\_LAST\_SAMPLES@{CMD\_READ\_LAST\_SAMPLES}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CMD\_READ\_LAST\_SAMPLES}{CMD\_READ\_LAST\_SAMPLES}}
+{\footnotesize\ttfamily \#define CMD\+\_\+\+READ\+\_\+\+LAST\+\_\+\+SAMPLES~\textquotesingle{}l\textquotesingle{}}
+
+Command to read last samples \mbox{\Hypertarget{cmdproc_8h_a56d05601da8438bda9664c2030db9881}\label{cmdproc_8h_a56d05601da8438bda9664c2030db9881}} 
+\index{cmdproc.h@{cmdproc.h}!CMD\_READ\_SENSOR@{CMD\_READ\_SENSOR}}
+\index{CMD\_READ\_SENSOR@{CMD\_READ\_SENSOR}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CMD\_READ\_SENSOR}{CMD\_READ\_SENSOR}}
+{\footnotesize\ttfamily \#define CMD\+\_\+\+READ\+\_\+\+SENSOR~\textquotesingle{}p\textquotesingle{}}
+
+Command to read specific sensor value \mbox{\Hypertarget{cmdproc_8h_aa0d1decc068e2185edb35564d0806a3d}\label{cmdproc_8h_aa0d1decc068e2185edb35564d0806a3d}} 
+\index{cmdproc.h@{cmdproc.h}!CMD\_RESET\_HISTORY@{CMD\_RESET\_HISTORY}}
+\index{CMD\_RESET\_HISTORY@{CMD\_RESET\_HISTORY}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CMD\_RESET\_HISTORY}{CMD\_RESET\_HISTORY}}
+{\footnotesize\ttfamily \#define CMD\+\_\+\+RESET\+\_\+\+HISTORY~\textquotesingle{}r\textquotesingle{}}
+
+Command to reset history \mbox{\Hypertarget{cmdproc_8h_a6bb4f467d4249793cccf672c4c04c71a}\label{cmdproc_8h_a6bb4f467d4249793cccf672c4c04c71a}} 
+\index{cmdproc.h@{cmdproc.h}!CO2\_MAX@{CO2\_MAX}}
+\index{CO2\_MAX@{CO2\_MAX}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CO2\_MAX}{CO2\_MAX}}
+{\footnotesize\ttfamily \#define CO2\+\_\+\+MAX~20000}
+
+Maximum CO2 value \mbox{\Hypertarget{cmdproc_8h_af891bd4e613223023504f41b00ae59bd}\label{cmdproc_8h_af891bd4e613223023504f41b00ae59bd}} 
+\index{cmdproc.h@{cmdproc.h}!CO2\_MIN@{CO2\_MIN}}
+\index{CO2\_MIN@{CO2\_MIN}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{CO2\_MIN}{CO2\_MIN}}
+{\footnotesize\ttfamily \#define CO2\+\_\+\+MIN~400}
+
+Minimum CO2 value \mbox{\Hypertarget{cmdproc_8h_a755c019733af60e8024e12a74b2f8650}\label{cmdproc_8h_a755c019733af60e8024e12a74b2f8650}} 
+\index{cmdproc.h@{cmdproc.h}!COMMAND\_ERROR@{COMMAND\_ERROR}}
+\index{COMMAND\_ERROR@{COMMAND\_ERROR}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{COMMAND\_ERROR}{COMMAND\_ERROR}}
+{\footnotesize\ttfamily \#define COMMAND\+\_\+\+ERROR~-\/3}
+
+Error code for command processing error \mbox{\Hypertarget{cmdproc_8h_ab4f53aba70048d2dc563f83e34860225}\label{cmdproc_8h_ab4f53aba70048d2dc563f83e34860225}} 
+\index{cmdproc.h@{cmdproc.h}!COMMAND\_INVALID@{COMMAND\_INVALID}}
+\index{COMMAND\_INVALID@{COMMAND\_INVALID}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{COMMAND\_INVALID}{COMMAND\_INVALID}}
+{\footnotesize\ttfamily \#define COMMAND\+\_\+\+INVALID~-\/2}
+
+Error code for invalid command \mbox{\Hypertarget{cmdproc_8h_a3c8499e80fbb9d61c35a1c0d99dc903b}\label{cmdproc_8h_a3c8499e80fbb9d61c35a1c0d99dc903b}} 
+\index{cmdproc.h@{cmdproc.h}!EMPTY\_BUFFER@{EMPTY\_BUFFER}}
+\index{EMPTY\_BUFFER@{EMPTY\_BUFFER}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{EMPTY\_BUFFER}{EMPTY\_BUFFER}}
+{\footnotesize\ttfamily \#define EMPTY\+\_\+\+BUFFER~-\/7}
+
+Error code for empty buffer \mbox{\Hypertarget{cmdproc_8h_a4cc630b5a4ac206fbcb8794c4fcd8529}\label{cmdproc_8h_a4cc630b5a4ac206fbcb8794c4fcd8529}} 
+\index{cmdproc.h@{cmdproc.h}!EMPTY\_STRING@{EMPTY\_STRING}}
+\index{EMPTY\_STRING@{EMPTY\_STRING}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{EMPTY\_STRING}{EMPTY\_STRING}}
+{\footnotesize\ttfamily \#define EMPTY\+\_\+\+STRING~-\/1}
+
+Error code for empty string \mbox{\Hypertarget{cmdproc_8h_a0f07f12ba8949770acfc44890d300eb0}\label{cmdproc_8h_a0f07f12ba8949770acfc44890d300eb0}} 
+\index{cmdproc.h@{cmdproc.h}!END\_OF\_FRAME@{END\_OF\_FRAME}}
+\index{END\_OF\_FRAME@{END\_OF\_FRAME}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{END\_OF\_FRAME}{END\_OF\_FRAME}}
+{\footnotesize\ttfamily \#define END\+\_\+\+OF\+\_\+\+FRAME~\textquotesingle{}!\textquotesingle{}}
+
+End of frame symbol \mbox{\Hypertarget{cmdproc_8h_adbc61839f796855d7e5712e3223e091f}\label{cmdproc_8h_adbc61839f796855d7e5712e3223e091f}} 
+\index{cmdproc.h@{cmdproc.h}!FULL\_BUFFER@{FULL\_BUFFER}}
+\index{FULL\_BUFFER@{FULL\_BUFFER}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{FULL\_BUFFER}{FULL\_BUFFER}}
+{\footnotesize\ttfamily \#define FULL\+\_\+\+BUFFER~-\/5}
+
+Error code for full buffer \mbox{\Hypertarget{cmdproc_8h_a8a4c48612df951af1b7f066b47950b2f}\label{cmdproc_8h_a8a4c48612df951af1b7f066b47950b2f}} 
+\index{cmdproc.h@{cmdproc.h}!HISTORY@{HISTORY}}
+\index{HISTORY@{HISTORY}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{HISTORY}{HISTORY}}
+{\footnotesize\ttfamily \#define HISTORY~20}
+
+Maximum size of history data \mbox{\Hypertarget{cmdproc_8h_a970046dc24185b03aab6ea549a67761e}\label{cmdproc_8h_a970046dc24185b03aab6ea549a67761e}} 
+\index{cmdproc.h@{cmdproc.h}!HUMIDITY\_MAX@{HUMIDITY\_MAX}}
+\index{HUMIDITY\_MAX@{HUMIDITY\_MAX}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{HUMIDITY\_MAX}{HUMIDITY\_MAX}}
+{\footnotesize\ttfamily \#define HUMIDITY\+\_\+\+MAX~100}
+
+Maximum humidity value \mbox{\Hypertarget{cmdproc_8h_a50baad14fa17c79e891d153605301b2c}\label{cmdproc_8h_a50baad14fa17c79e891d153605301b2c}} 
+\index{cmdproc.h@{cmdproc.h}!HUMIDITY\_MIN@{HUMIDITY\_MIN}}
+\index{HUMIDITY\_MIN@{HUMIDITY\_MIN}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{HUMIDITY\_MIN}{HUMIDITY\_MIN}}
+{\footnotesize\ttfamily \#define HUMIDITY\+\_\+\+MIN~0}
+
+Minimum humidity value \mbox{\Hypertarget{cmdproc_8h_ab8841f4d2a70b13d159a8c607c71b66f}\label{cmdproc_8h_ab8841f4d2a70b13d159a8c607c71b66f}} 
+\index{cmdproc.h@{cmdproc.h}!START\_OF\_FRAME@{START\_OF\_FRAME}}
+\index{START\_OF\_FRAME@{START\_OF\_FRAME}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{START\_OF\_FRAME}{START\_OF\_FRAME}}
+{\footnotesize\ttfamily \#define START\+\_\+\+OF\+\_\+\+FRAME~\textquotesingle{}\#\textquotesingle{}}
+
+Start of frame symbol \mbox{\Hypertarget{cmdproc_8h_a39575505cf8f769ab978b079efcc5ae1}\label{cmdproc_8h_a39575505cf8f769ab978b079efcc5ae1}} 
+\index{cmdproc.h@{cmdproc.h}!STRING\_ERROR@{STRING\_ERROR}}
+\index{STRING\_ERROR@{STRING\_ERROR}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{STRING\_ERROR}{STRING\_ERROR}}
+{\footnotesize\ttfamily \#define STRING\+\_\+\+ERROR~-\/4}
+
+Error code for string processing error \mbox{\Hypertarget{cmdproc_8h_aa90cac659d18e8ef6294c7ae337f6b58}\label{cmdproc_8h_aa90cac659d18e8ef6294c7ae337f6b58}} 
+\index{cmdproc.h@{cmdproc.h}!SUCCESS@{SUCCESS}}
+\index{SUCCESS@{SUCCESS}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{SUCCESS}{SUCCESS}}
+{\footnotesize\ttfamily \#define SUCCESS~0}
+
+Success indicator \mbox{\Hypertarget{cmdproc_8h_a9acb14595bfb9523655370c1bb477506}\label{cmdproc_8h_a9acb14595bfb9523655370c1bb477506}} 
+\index{cmdproc.h@{cmdproc.h}!TEMP\_MAX@{TEMP\_MAX}}
+\index{TEMP\_MAX@{TEMP\_MAX}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{TEMP\_MAX}{TEMP\_MAX}}
+{\footnotesize\ttfamily \#define TEMP\+\_\+\+MAX~60}
+
+Maximum temperature value \mbox{\Hypertarget{cmdproc_8h_ad7d20c7d1ec1729bf6892ddabbac3ab0}\label{cmdproc_8h_ad7d20c7d1ec1729bf6892ddabbac3ab0}} 
+\index{cmdproc.h@{cmdproc.h}!TEMP\_MIN@{TEMP\_MIN}}
+\index{TEMP\_MIN@{TEMP\_MIN}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{TEMP\_MIN}{TEMP\_MIN}}
+{\footnotesize\ttfamily \#define TEMP\+\_\+\+MIN~-\/50}
+
+Minimum temperature value \mbox{\Hypertarget{cmdproc_8h_a7e4912ef6d5612f8ebca463ff206d9ce}\label{cmdproc_8h_a7e4912ef6d5612f8ebca463ff206d9ce}} 
+\index{cmdproc.h@{cmdproc.h}!UART\_RX\_SIZE@{UART\_RX\_SIZE}}
+\index{UART\_RX\_SIZE@{UART\_RX\_SIZE}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{UART\_RX\_SIZE}{UART\_RX\_SIZE}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+RX\+\_\+\+SIZE~20}
+
+Maximum size of the UART receive buffer \mbox{\Hypertarget{cmdproc_8h_a7bd31e3844f5461db2cbe6d906ca4040}\label{cmdproc_8h_a7bd31e3844f5461db2cbe6d906ca4040}} 
+\index{cmdproc.h@{cmdproc.h}!UART\_TX\_SIZE@{UART\_TX\_SIZE}}
+\index{UART\_TX\_SIZE@{UART\_TX\_SIZE}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{UART\_TX\_SIZE}{UART\_TX\_SIZE}}
+{\footnotesize\ttfamily \#define UART\+\_\+\+TX\+\_\+\+SIZE~20}
+
+Maximum size of the UART transmit buffer 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{cmdproc_8h_a2a0e03d8d8ff0f0459f7623ffd6d39b1}\label{cmdproc_8h_a2a0e03d8d8ff0f0459f7623ffd6d39b1}} 
+\index{cmdproc.h@{cmdproc.h}!calcChecksum@{calcChecksum}}
+\index{calcChecksum@{calcChecksum}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{calcChecksum()}{calcChecksum()}}
+{\footnotesize\ttfamily int calc\+Checksum (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{buf,  }\item[{int}]{nbytes }\end{DoxyParamCaption})}
+
+
+
+Calculate the checksum of a buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buf} & Pointer to the buffer. \\
+\hline
+{\em nbytes} & Number of bytes in the buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns the checksum value. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cmdproc_8h_aced3facd7540036687482d443d6aecde}\label{cmdproc_8h_aced3facd7540036687482d443d6aecde}} 
+\index{cmdproc.h@{cmdproc.h}!cmdProc@{cmdProc}}
+\index{cmdProc@{cmdProc}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{cmdProc()}{cmdProc()}}
+{\footnotesize\ttfamily int cmd\+Proc (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Process the received command. 
+
+\begin{DoxyReturn}{Returns}
+Returns an error code indicating the status of command processing. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cmdproc_8h_adce8b854db6da5fa35f860561f6272e2}\label{cmdproc_8h_adce8b854db6da5fa35f860561f6272e2}} 
+\index{cmdproc.h@{cmdproc.h}!emulateSensors@{emulateSensors}}
+\index{emulateSensors@{emulateSensors}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{emulateSensors()}{emulateSensors()}}
+{\footnotesize\ttfamily int emulate\+Sensors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Emulate sensor readings and process received commands. 
+
+\begin{DoxyReturn}{Returns}
+Returns an error code indicating the status of emulation and command processing. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cmdproc_8h_a82e747b7eb571c6b45aa1f5b396e9a2d}\label{cmdproc_8h_a82e747b7eb571c6b45aa1f5b396e9a2d}} 
+\index{cmdproc.h@{cmdproc.h}!getTxBuff@{getTxBuff}}
+\index{getTxBuff@{getTxBuff}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{getTxBuff()}{getTxBuff()}}
+{\footnotesize\ttfamily void get\+Tx\+Buff (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{buf,  }\item[{int}]{len }\end{DoxyParamCaption})}
+
+
+
+Get the UART transmit buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buf} & Pointer to store the transmit buffer. \\
+\hline
+{\em len} & Length of the transmit buffer. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cmdproc_8h_ab3dc8254662edb9636c570e6e0ee1e4b}\label{cmdproc_8h_ab3dc8254662edb9636c570e6e0ee1e4b}} 
+\index{cmdproc.h@{cmdproc.h}!resetRxBuff@{resetRxBuff}}
+\index{resetRxBuff@{resetRxBuff}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{resetRxBuff()}{resetRxBuff()}}
+{\footnotesize\ttfamily void reset\+Rx\+Buff (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Reset the UART receive buffer. 
+
+\mbox{\Hypertarget{cmdproc_8h_a471840a9a7e0abf8108d3957a683e618}\label{cmdproc_8h_a471840a9a7e0abf8108d3957a683e618}} 
+\index{cmdproc.h@{cmdproc.h}!resetTxBuff@{resetTxBuff}}
+\index{resetTxBuff@{resetTxBuff}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{resetTxBuff()}{resetTxBuff()}}
+{\footnotesize\ttfamily void reset\+Tx\+Buff (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Reset the UART transmit buffer. 
+
+\mbox{\Hypertarget{cmdproc_8h_a67ae8a79a708a3c5471668bddbd16400}\label{cmdproc_8h_a67ae8a79a708a3c5471668bddbd16400}} 
+\index{cmdproc.h@{cmdproc.h}!rxChar@{rxChar}}
+\index{rxChar@{rxChar}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{rxChar()}{rxChar()}}
+{\footnotesize\ttfamily int rx\+Char (\begin{DoxyParamCaption}\item[{unsigned char}]{car }\end{DoxyParamCaption})}
+
+
+
+Receive a character via UART. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em car} & The character received via UART. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns an error code indicating the status of character reception. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cmdproc_8h_abdb4363f0662688850bbcdfb59ce4566}\label{cmdproc_8h_abdb4363f0662688850bbcdfb59ce4566}} 
+\index{cmdproc.h@{cmdproc.h}!txChar@{txChar}}
+\index{txChar@{txChar}!cmdproc.h@{cmdproc.h}}
+\doxysubsubsection{\texorpdfstring{txChar()}{txChar()}}
+{\footnotesize\ttfamily int tx\+Char (\begin{DoxyParamCaption}\item[{unsigned char}]{car }\end{DoxyParamCaption})}
+
+
+
+Transmit a character via UART. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em car} & The character to transmit via UART. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns an error code indicating the status of character transmission. 
+\end{DoxyReturn}

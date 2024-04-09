@@ -1,10 +1,13 @@
-#ifndef CMD_PROC_H_
-#define CMD_PROC_H_
-
 /**
  * @file cmdproc.h
  * @brief Header file for command processing module.
+ *  @authors Luís Araújo, Bernardo Modesto
+ * @date 9 Abril 2024
  */
+
+#ifndef CMD_PROC_H_
+#define CMD_PROC_H_
+
 
 // Max size of the buffers
 #define UART_RX_SIZE 20 /**< Maximum size of the UART receive buffer */
