@@ -424,9 +424,9 @@ void getTxBuff(unsigned char * buf, int len)
 int emulateSensors(){
     int i=0;
     // Adiciona um pequeno valor aleatório aos valores dos sensores
-    temperature += (rand() % 3) - 1; // variação de -1 a 1
-    humidity += (rand() % 3) - 1; // variação de -1 a 1
-    co2 += (rand() % 3) - 1; // variação de -1 a 1
+    temperature += (rand() % 3) - 1; // variação de 1
+    humidity += (rand() % 3) - 1; // variação de 1
+    co2 += (rand() % 3) - 1; // variação de 1
 
     // Garante que os valores dos sensores estão dentro dos limites
     if (temperature < TEMP_MIN) temperature = TEMP_MIN;
