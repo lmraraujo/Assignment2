@@ -29,7 +29,8 @@ int cmdProc(void)
     if (rxBufflen == 0) return EMPTY_STRING;
 
     if(UARTRxBuff[0] != START_OF_FRAME) return COMMAND_INVALID;
-   
+    if(UARTRxBuff[8] != END_OF_FRAME) return STRING_ERROR;
+				
     sid = UARTRxBuff[2];
     bit1 = UARTRxBuff[1];
 
@@ -105,14 +106,6 @@ int cmdProc(void)
     switch(UARTRxBuff[1]){
 
             case CMD_READ_SENSOR:    
-             
-                if(!(calcChecksum(&(UARTRxBuff[i+1]),2))) {
-					return COMMAND_ERROR;
-				}
-
-                if(UARTRxBuff[8] != END_OF_FRAME) {
-					return STRING_ERROR;
-				}
              
                 emulateSensors(); // emulate values from the sensor
                 int l=0;
@@ -370,7 +363,7 @@ int cmdProc(void)
         if(UARTRxBuff[1]!= 'p' && UARTRxBuff[1]!= 'a' && UARTRxBuff[1]!= 'l' && UARTRxBuff[1]!= 'r') return COMMAND_INVALID;
 
           
-        return STRING_ERROR;
+        return SUCCESS;
     }
     
 

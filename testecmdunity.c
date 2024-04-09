@@ -47,7 +47,7 @@ void test_cmdProc_Invalid(void) {
     // Test cmdProc with a valid command
     // Example: '#At+023h042c12345!' should return SUCCESS
     unsigned char command[] = "#ft42090!";
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
     }
     TEST_ASSERT_EQUAL_INT(COMMAND_INVALID, cmdProc());
@@ -57,7 +57,7 @@ void test_cmdProc_Success(void) {
     // Test cmdProc with a valid command
     // Example: '#at+023h042c12345!' should return SUCCESS
     unsigned char command[] = "#pt12071!";
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
     }
     TEST_ASSERT_EQUAL_INT(SUCCESS, cmdProc());
