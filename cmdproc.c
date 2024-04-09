@@ -14,6 +14,9 @@ int histIndex = 0;
 
 static unsigned char auxBuff[20];
 
+char string[5];
+char array [4];
+
 // Init sensors with mean value
 int temperature = (TEMP_MIN + TEMP_MAX) / 2; //5 A-15,V-13,G-11,Al-18
 int humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;//50 A-60, V-40, G-55, Al-35
@@ -63,6 +66,22 @@ int cmdProc(void)
                         break;
                 }
                 
+
+        //CS de entrada
+        int check_entrada=0;
+
+        array[0]=UARTRxBuff[5];
+        array[1]=UARTRxBuff[6];
+        array[2]=UARTRxBuff[7];
+
+        memcpy(string,array,3);
+        string[3]='\0';
+
+        check_entrada+=atoi(string);
+
+        if(calcChecksum(UARTRxBuff,5)==check_entrada)printf("\nChecksum correto,(transmissao bem sucedida)\n");
+        else return CHECKSUM_ERROR;
+
         
         switch(UARTRxBuff[i+1]){
 
@@ -77,7 +96,7 @@ int cmdProc(void)
 					return COMMAND_ERROR;
 				}
 
-                if(UARTRxBuff[i+5] != END_OF_FRAME) {
+                if(UARTRxBuff[i+8] != END_OF_FRAME) {
 					return STRING_ERROR;
 				}
              
@@ -428,9 +447,8 @@ int emulateSensors(){
 
     // History handling
  
-    if(histIndex>3){
+    if(histIndex>19){
         histIndex=0;
-        //nao vao estar por ordem apos completar o array pela primeira vez
     }
 
     temphist[histIndex] = temperature;
@@ -609,7 +627,7 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
         
     }
     if(UARTRxBuff[i+1] == 'l'){
-        txChar('l');//ver dps
+        txChar('l');
         len++;
     }
     else{
