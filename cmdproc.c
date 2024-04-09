@@ -1,19 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "cmdproc.h"
-
-
-
 
 int temphist[HISTORY];
 int humhist[HISTORY];
 int cohist[HISTORY];
 int histIndex = 0;
-
 static unsigned char auxBuff[20];
-
 char string[5];
 char array [4];
 
@@ -34,7 +28,6 @@ int cmdProc(void)
 
     if (rxBufflen == 0) return EMPTY_STRING;
 
-    
     if(UARTRxBuff[0] != START_OF_FRAME) return COMMAND_INVALID;
    
     sid = UARTRxBuff[2];
@@ -63,14 +56,12 @@ int cmdProc(void)
                         return COMMAND_INVALID;
     }
         
-    
-
     temperature = (TEMP_MIN + TEMP_MAX) / 2; //5 A-15,V-13,G-11,Al-18
     humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;//50 A-60, V-40, G-55, Al-35
     co2 = (CO2_MIN + CO2_MAX) / 2;//10200 A-500, V-300, G-400, Al-450
-
-        unsigned char regiao= UARTRxBuff[i+3];
-        switch(regiao){
+    unsigned char regiao= UARTRxBuff[i+3];
+    
+    switch(regiao){
                     case '1'://aveiro
                         temperature+=10;
                         humidity+=10;
@@ -91,29 +82,27 @@ int cmdProc(void)
                         humidity-=15;
                         co2-=9750;
                         break;
-                }
+    }
                 
 
-        //CS de entrada
-        int check_entrada=0;
+    //CS de entrada
+    int check_entrada=0;
 
-        array[0]=UARTRxBuff[5];
-        array[1]=UARTRxBuff[6];
-        array[2]=UARTRxBuff[7];
+    array[0]=UARTRxBuff[5];
+    array[1]=UARTRxBuff[6];
+    array[2]=UARTRxBuff[7];
 
-        memcpy(string,array,3);
-        string[3]='\0';
+    memcpy(string,array,3);
+    string[3]='\0';
+    check_entrada+=atoi(string);
 
-        check_entrada+=atoi(string);
 
-    
+    if(calcChecksum(UARTRxBuff,5)==check_entrada)printf("\nChecksum correto,(transmissao bem sucedida)\n");
+    else{ 
+        return CHECKSUM_ERROR;
+    }
 
-        if(calcChecksum(UARTRxBuff,5)==check_entrada)printf("\nChecksum correto,(transmissao bem sucedida)\n");
-        else{ 
-            return CHECKSUM_ERROR;
-        }
-        if(UARTRxBuff[1]=='f') return COMMAND_INVALID; 
-        switch(UARTRxBuff[1]){
+    switch(UARTRxBuff[1]){
 
             case CMD_READ_SENSOR:    
              
@@ -125,16 +114,9 @@ int cmdProc(void)
 					return STRING_ERROR;
 				}
              
-
-
                 emulateSensors(); // emulate values from the sensor
-                
-                
-
                 int l=0;
                 int p=0;
-                //for(l=0;l<UART_TX_SIZE;l++){
-                //printf("%c ",UARTTxBuff[l]);}
 
                 if(sid == 't'){
 
@@ -150,6 +132,7 @@ int cmdProc(void)
                             p++;
                         }
                     }
+
                     resetTxBuff();
                     
                     processing= UARTRxBuff[i+4];
@@ -193,12 +176,10 @@ int cmdProc(void)
 
                 }
 
-
-
                 p=0;
                 if(sid == 'h'){
 
-                  for(l=0;l<UART_TX_SIZE;l++){
+                    for(l=0;l<UART_TX_SIZE;l++){
                         if((countt>0 && countt<4)|| UARTTxBuff[l]=='t'){
                             countt++;
                         }
@@ -210,12 +191,14 @@ int cmdProc(void)
                             p++;
                         }
                     }
+
                     resetTxBuff();
+
                     processing= UARTRxBuff[i+4];
                     if(processing=='1'){
                         for(l=0;l<UART_TX_SIZE;l++){
                             printf("%c ",auxBuff[l]);
-                            }
+                        }
 
                     }
                     else if(processing=='2'){
@@ -253,9 +236,6 @@ int cmdProc(void)
 
                     
                 }
-
-
-
 
                 p=0;
                 if(sid == 'c'){
@@ -271,12 +251,14 @@ int cmdProc(void)
                             p++;
                         }
                     }
+
                     resetTxBuff();
+
                     processing= UARTRxBuff[i+4];
                     if(processing=='1'){
                         for(l=0;l<UART_TX_SIZE;l++){
                             printf("%c ",auxBuff[l]);
-                            }
+                        }
 
                     }
                     else if(processing=='2'){
@@ -316,11 +298,12 @@ int cmdProc(void)
             case CMD_READ_ALL:
                 
                 emulateSensors();
+
                 processing= UARTRxBuff[i+4];
                 if(processing == '1'){
                     for(l=0;l<UART_TX_SIZE;l++){
                         printf("%c ",UARTTxBuff[l]);
-                        }
+                    }
                 }
                 else if(processing == '2'){
                         if(regiao=='1'){
@@ -340,11 +323,10 @@ int cmdProc(void)
                         printf("Humidade: %c%c%c\n",UARTTxBuff[7],UARTTxBuff[8],UARTTxBuff[9]);
                         printf("Co2: %c%c%c%c%c\n",UARTTxBuff[11],UARTTxBuff[12],UARTTxBuff[13],UARTTxBuff[14],UARTTxBuff[15]);
 
-                }
+                    }
                 return SUCCESS;  
 
             case CMD_READ_LAST_SAMPLES:
-                
                 
                 int printIndex;
 
@@ -380,10 +362,7 @@ int cmdProc(void)
                 }
 
                 return SUCCESS; 
-            
-
-
-
+        
             default:
                 return COMMAND_INVALID;
         }
@@ -399,56 +378,45 @@ int cmdProc(void)
 
 int rxChar(unsigned char car)
 {
-	/* If rxbuff not full add char to it */
 	if (rxBufflen < UART_RX_SIZE) {
 		UARTRxBuff[rxBufflen] = car;
 		rxBufflen += 1;
 		return SUCCESS;		
 	}	
-	/* If cmd string full return error */
-	return STRING_ERROR;//MUDAR
+	return STRING_ERROR;
 }
 
 int txChar(unsigned char car)
 {
-	/* If rxbuff not full add char to it */
 	if (txBufflen < UART_TX_SIZE) {
 		UARTTxBuff[txBufflen] = car;
 		txBufflen += 1;
 		return 0;		
 	}	
-	/* If cmd string full return error */
-	return STRING_ERROR;//MUDAR
+	return STRING_ERROR;
 }
 
 void resetRxBuff(void)
 {
-    // Reset each element of the RX buffer to '\0' (null character)
     for (int i = 0; i < UART_RX_SIZE; i++) {
         UARTRxBuff[i] = '\0';
     }
-    // Reset the length to zero
     rxBufflen = 0;		
 }
 
 void resetTxBuff(void)
 {
-	// Reset each element of the TX buffer to '\0' (null character)
     for (int i = 0; i < UART_TX_SIZE; i++) {
         UARTTxBuff[i] = '\0';
     }
-    // Reset the length to zero
     txBufflen = 0;		
 }
 
 void getTxBuff(unsigned char * buf, int len)
 {
-    // Copy the length of the TX buffer to the variable pointed to by len
     len = txBufflen;
-    
-    // Check if the TX buffer contains any data
+
     if (txBufflen > 0) {
-        // If the buffer is not empty, copy its contents to the buffer pointed to by buf
         memcpy(buf, UARTTxBuff, len);
     }		
 }
@@ -469,7 +437,6 @@ int emulateSensors(){
     if (co2 > CO2_MAX) co2 = CO2_MAX;
 
     // History handling
- 
     if(histIndex>19){
         histIndex=0;
     }
@@ -479,8 +446,6 @@ int emulateSensors(){
     cohist[histIndex] = co2;
 
     histIndex++;
-
-
 
    // Convert sensor data to characters and store them in the UARTTxBuff
     int len = 0;
@@ -539,34 +504,33 @@ int emulateSensors(){
         txChar('!'); // End of frame        
         len++;       // Increment length
 
-int checkin = calcChecksum(UARTTxBuff, lencheck);
+        int checkin = calcChecksum(UARTTxBuff, lencheck);
 
-    int checkot = calcChecksum(UARTTxBuff, lencheck);
-    if (checkin==checkot){
-       
-        
-        UARTTxBuff[lencheck]='0' + (checkot / 100);//tinha aqui len1 ja ns oq era
-        txChar('0' + ((checkot / 10) % 10)); // Tens digit
-        len++;
-        txChar('0' + (checkot % 10)); // Units digit
-        len++;
-        txChar('!'); // End of frame        
-        len++;       // Increment length
-        // If the buffer is not full, fill the remaining spaces with null characters
-        for (int k = len; k< UART_TX_SIZE; k++) {
-        txChar('\0');
-        }
-        checkot = calcChecksum(UARTTxBuff, lencheck);
+        int checkot = calcChecksum(UARTTxBuff, lencheck);
         if (checkin==checkot){
-           return SUCCESS;
+
+            UARTTxBuff[lencheck]='0' + (checkot / 100);// Hundreds
+            txChar('0' + ((checkot / 10) % 10)); // Tens digit
+            len++;
+            txChar('0' + (checkot % 10)); // Units digit
+            len++;
+            txChar('!'); // End of frame        
+            len++;       // Increment length
+            // If the buffer is not full, fill the remaining spaces with null characters
+            for (int k = len; k< UART_TX_SIZE; k++) {
+            txChar('\0');
+            }
+            checkot = calcChecksum(UARTTxBuff, lencheck);
+            if (checkin==checkot){
+            return SUCCESS;
+            }
+            else {
+                return CHECKSUM_ERROR;
+            }
         }
-        else {
-            return CHECKSUM_ERROR;
-        }
-    }
-    else{
+        else{
         return CHECKSUM_ERROR;
-    }
+        }
 
     }
     
@@ -622,36 +586,36 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
         txChar('!'); // End of frame        
         len++;       // Increment length
 
-int checkin = calcChecksum(UARTTxBuff, lencheck);
+        int checkin = calcChecksum(UARTTxBuff, lencheck);
 
-    int checkot = calcChecksum(UARTTxBuff, lencheck);
-    if (checkin==checkot){
-       
-        UARTTxBuff[lencheck]='0' + (checkot / 100);//tinha aqui len1 ja ns oq era
-        txChar('0' + ((checkot / 10) % 10)); // Tens digit
-        len++;
-        txChar('0' + (checkot % 10)); // Units digit
-        len++;
-        txChar('!'); // End of frame        
-        len++;       // Increment length
-        // If the buffer is not full, fill the remaining spaces with null characters
-        for (int k = len; k< UART_TX_SIZE; k++) {
-        txChar('\0');
-        }
-        checkot = calcChecksum(UARTTxBuff, lencheck);
+        int checkot = calcChecksum(UARTTxBuff, lencheck);
         if (checkin==checkot){
-           return SUCCESS;
-        }
-        else 
-        {
-            return CHECKSUM_ERROR;
-            
-        }
+       
+            UARTTxBuff[lencheck]='0' + (checkot / 100);//tinha aqui len1 ja ns oq era
+            txChar('0' + ((checkot / 10) % 10)); // Tens digit
+            len++;
+            txChar('0' + (checkot % 10)); // Units digit
+            len++;
+            txChar('!'); // End of frame        
+            len++;       // Increment length
+            // If the buffer is not full, fill the remaining spaces with null characters
+            for (int k = len; k< UART_TX_SIZE; k++) {
+            txChar('\0');
+            }
+            checkot = calcChecksum(UARTTxBuff, lencheck);
+            if (checkin==checkot){
+            return SUCCESS;
+            }
+            else 
+            {
+                return CHECKSUM_ERROR;
+                
+            }
         
-    }
-    else{
+        }
+        else{
         return CHECKSUM_ERROR;
-    }
+        }
         
     }
     if(UARTRxBuff[i+1] == 'l'){
@@ -661,24 +625,18 @@ int checkin = calcChecksum(UARTTxBuff, lencheck);
     else{
         return COMMAND_INVALID;
         }
-
-
-        
-    }
+   
+}
     
-
-
 int calcChecksum(unsigned char *buf, int nbytes) {
-     // Compute the checksum as the sum of the numerical value of each byte in the buffer
+
     int checksum = 0;
     for (int i = 1; i < nbytes; i++) {
         if(buf[i]!='!' && buf[i]!='#'&& buf[i]!='\0')  checksum += buf[i];
         else checksum+=0;
     }
 
-    // Compute the modulo 256 checksum
     checksum %= 256;
 
-    // Return the checksum value
     return checksum;
 }
