@@ -299,7 +299,7 @@ int cmdProc(void)
                 
                 emulateSensors();
 
-                processing= UARTRxBuff[i+4];
+                processing= UARTRxBuff[4];
                 if(processing == '1'){
                     for(l=0;l<UART_TX_SIZE;l++){
                         printf("%c ",UARTTxBuff[l]);
