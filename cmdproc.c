@@ -361,11 +361,8 @@ int cmdProc(void)
 
             default:
                 return COMMAND_INVALID;
-
-
-
-
         }
+            if(UARTRxBuff[i+1]!= 'p' && UARTRxBuff[i+1]!= 'a' && UARTRxBuff[i+1]!= 'l' && UARTRxBuff[i+1]!= 'r') return COMMAND_INVALID;
 
           }
     return STRING_ERROR;
