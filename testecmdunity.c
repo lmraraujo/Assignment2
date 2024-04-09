@@ -76,8 +76,8 @@ void test_calcChecksum_Success(void) {
 
 void test_cmdProc_Success(void) {
     // Test cmdProc with a valid command
-    // Example: '#At+023h042c12345!' should return SUCCESS
-    unsigned char command[] = "#pt12!";
+    // Example: '#at+023h042c12345!' should return SUCCESS
+    unsigned char command[] = "#pt12071!";
     for (int i = 0; i < strlen(command); i++) {
         TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
     }
@@ -89,9 +89,9 @@ void test_cmdProc_Invalid(void) {
     // Test cmdProc with a valid command
     // Example: '#At+023h042c12345!' should return SUCCESS
     unsigned char command[] = "#ft12!";
-    //for (int i = 0; i < strlen(command); i++) {
-      //  TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
-    //}
+    for (int i = 0; i < strlen(command); i++) {
+        TEST_ASSERT_EQUAL_INT(SUCCESS, rxChar(command[i]));
+    }
     TEST_ASSERT_EQUAL_INT(COMMAND_INVALID, cmdProc());
 }
 

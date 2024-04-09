@@ -24,7 +24,7 @@ int co2 = (CO2_MIN + CO2_MAX) / 2;//10200 A-500, V-300, G-400, Al-450
 
 int cmdProc(void)
 {
-    int i;
+    int i=0;
     int counth=0;
     int countc=0;
     int countt=0;
@@ -35,6 +35,18 @@ int cmdProc(void)
 
     
     if(UARTRxBuff[0] != START_OF_FRAME) return COMMAND_INVALID;
+    printf("%c", UARTRxBuff[2]);
+
+    switch (UARTRxBuff[2]){
+                    case 't':
+                        break;
+                    case 'h':
+                        break;
+                    case 'c':
+                        break;
+                    default:
+                        return COMMAND_INVALID;
+                }
         
     
 
@@ -42,7 +54,6 @@ int cmdProc(void)
     humidity = (HUMIDITY_MIN + HUMIDITY_MAX) / 2;//50 A-60, V-40, G-55, Al-35
     co2 = (CO2_MIN + CO2_MAX) / 2;//10200 A-500, V-300, G-400, Al-450
 
-    if (i < rxBufflen){
         unsigned char regiao= UARTRxBuff[i+3];
         switch(regiao){
                     case '1'://aveiro
@@ -89,14 +100,9 @@ int cmdProc(void)
             return -8;
         }
         
-        switch(UARTRxBuff[i+1]){
+        switch(UARTRxBuff[1]){
 
             case CMD_READ_SENSOR:    
-                sid = UARTRxBuff[i+2];
-                
-                if (sid != 't' && sid != 'h' && sid != 'c'){
-                    return COMMAND_INVALID;
-                }  
              
                 if(!(calcChecksum(&(UARTRxBuff[i+1]),2))) {
 					return COMMAND_ERROR;
@@ -370,8 +376,8 @@ int cmdProc(void)
         }
             if(UARTRxBuff[i+1]!= 'p' && UARTRxBuff[i+1]!= 'a' && UARTRxBuff[i+1]!= 'l' && UARTRxBuff[i+1]!= 'r') return COMMAND_INVALID;
 
-          }
-    return STRING_ERROR;
+          
+        return STRING_ERROR;
     }
     
 
